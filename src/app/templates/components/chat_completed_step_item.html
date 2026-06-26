@@ -1,0 +1,14 @@
+<li id="{{ completed_step_id }}"
+    class="chat-timeline-item chat-timeline-item-complete chat-agent-graph">
+    <span class="chat-timeline-rail" aria-hidden="true"></span>
+    <span class="chat-timeline-node" aria-hidden="true">✓</span>
+    <div class="chat-timeline-content chat-agent-node">
+        <span class="chat-timeline-label chat-agent-name">{{ agent_name }} agent</span>
+        <ul class="chat-agent-leaves">
+            <li class="chat-agent-leaf">{{ activity }}</li>
+            {% for detail in details %}
+                <li class="chat-agent-leaf">{{ detail }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</li>

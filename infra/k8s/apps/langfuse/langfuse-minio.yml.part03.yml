@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-minio
+  namespace: multi-agents
+  labels:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: minio
+spec:
+  ports:
+    - port: 9000
+      targetPort: 9000
+      name: api
+    - port: 9001
+      targetPort: 9001
+      name: console
+  selector:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: minio
+  clusterIP: None

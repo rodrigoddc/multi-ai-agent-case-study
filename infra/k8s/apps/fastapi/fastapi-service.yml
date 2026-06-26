@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-svc
+  namespace: multi-agents
+spec:
+  type: ClusterIP
+  selector:
+    app: fastapi
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP

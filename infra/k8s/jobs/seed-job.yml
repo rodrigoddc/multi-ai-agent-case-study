@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-hotels
+  namespace: multi-agents
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      containers:
+        - name: seed
+          image: localhost/seed-hotels:latest
+          imagePullPolicy: Never
+          env:
+            - name: APP_ENV
+              value: dev
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+      restartPolicy: Never

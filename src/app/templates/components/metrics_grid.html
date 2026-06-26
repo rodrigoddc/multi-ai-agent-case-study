@@ -1,0 +1,39 @@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="metric-card metric-card-blue">
+        <p class="metric-label">Total Hotels</p>
+        <p class="metric-value tabular-nums">{{ metrics.hotel_count | default('N/A') }}</p>
+    </div>
+
+    <div class="metric-card metric-card-green">
+        <p class="metric-label">Avg Occupancy</p>
+        <p class="metric-value tabular-nums">
+            {% if metrics.average_occupancy_rate is not none %}
+                {{ "%.1f" | format(metrics.average_occupancy_rate) }}%
+            {% else %}
+                N/A
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="metric-card metric-card-purple">
+        <p class="metric-label">Avg RevPAR</p>
+        <p class="metric-value tabular-nums">
+            {% if metrics.average_revpar is not none %}
+                ${{ "%.2f" | format(metrics.average_revpar) }}
+            {% else %}
+                N/A
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="metric-card metric-card-amber">
+        <p class="metric-label">Avg Sentiment</p>
+        <p class="metric-value tabular-nums">
+            {% if metrics.average_sentiment is not none %}
+                {{ "%.1f" | format(metrics.average_sentiment) }}
+            {% else %}
+                N/A
+            {% endif %}
+        </p>
+    </div>
+</div>

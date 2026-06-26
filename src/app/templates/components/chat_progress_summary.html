@@ -1,0 +1,12 @@
+<div id="chat-progress-summary-{{ message_id }}"
+     class="chat-progress-summary chat-progress-summary-{{ status }}"
+     hx-swap-oob="innerHTML">
+    <span class="chat-progress-summary-label">{{ label }}</span>
+    {% if status == 'running' %}
+        <div class="dot-pulse flex space-x-1" aria-label="Assistant workflow is running">
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+            <span class="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
+        </div>
+    {% endif %}
+</div>

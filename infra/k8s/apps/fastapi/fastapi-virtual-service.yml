@@ -1,0 +1,22 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: fastapi-vs
+  namespace: multi-agents
+spec:
+  hosts:
+    - fastapi-svc
+  http:
+    - route:
+        - destination:
+            host: fastapi-svc
+            subset: stable
+            port:
+              number: 8000
+          weight: 50
+        - destination:
+            host: fastapi-svc
+            subset: canary
+            port:
+              number: 8000
+          weight: 50

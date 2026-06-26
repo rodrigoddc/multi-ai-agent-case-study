@@ -1,0 +1,13 @@
+{%- if error_message %}
+<div class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
+    <p class="font-semibold">Insight temporarily unavailable</p>
+    <p class="mt-2 text-sm">{{ error_message }}</p>
+    <p class="mt-2 text-sm">Try again after the local model finishes its current request, or ask from the assistant panel where the workflow progress is visible.</p>
+</div>
+{%- else %}
+<div class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-900">
+    <p class="font-semibold">Insight temporarily unavailable</p>
+    <p class="mt-2 text-sm">The model provider did not answer before the request timed out.</p>
+    <p class="mt-2 text-sm">Try again after the local model finishes its current request, or ask from the assistant panel where the workflow progress is visible.</p>
+</div>
+{%- endif %}

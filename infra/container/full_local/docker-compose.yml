@@ -1,0 +1,113 @@
+include:
+  - ../app/docker-compose.yml
+  - ../langfuse/docker-compose.yml
+
+services:
+  fastapi:
+    environment:
+      DB_HOST: pgbouncer
+      DB_PORT: 5432
+    depends_on:
+      pgbouncer:
+        condition: service_healthy
+      langfuse-web:
+        condition: service_started
+      langfuse-worker:
+        condition: service_started
+    env_file:
+      - ../../../src/.env
+
+  seed:
+    environment:
+      DB_HOST: pgbouncer
+      DB_PORT: 5432
+    env_file:
+      - ../../../src/.env
+
+  sync-langfuse-datasets:
+    environment:
+      DB_HOST: pgbouncer
+      DB_PORT: 5432
+      LANGFUSE_HOST: http://langfuse-web:3000
+    env_file:
+      - ../../../src/.env
+    depends_on:
+      langfuse-web:
+        condition: service_started
+      langfuse-worker:
+        condition: service_started
+
+  sync-langfuse-score-configs:
+    environment:
+      DB_HOST: pgbouncer
+      DB_PORT: 5432
+      LANGFUSE_HOST: http://langfuse-web:3000
+    env_file:
+      - ../../../src/.env
+    depends_on:
+      langfuse-web:
+        condition: service_started
+      langfuse-worker:
+        condition: service_started
+
+  sync-langfuse-llm-judge-evaluators:
+    environment:
+      DB_HOST: pgbouncer
+      DB_PORT: 5432
+      LANGFUSE_HOST: http://langfuse-web:3000
+    env_file:
+      - ../../../src/.env
+    depends_on:
+      langfuse-web:
+        condition: service_started
+      langfuse-worker:
+        condition: service_started
+
+  run-online-langfuse-evaluators:
+    build:
+      context: ../../../
+      dockerfile: infra/container/jobs/Dockerfile
+    env_file:
+      - ../../../src/.env
+    environment:
+      LANGFUSE_HOST: http://langfuse-web:3000
+    command:
+      [
+        "uv",
+        "run",
+        "python",
+        "evaluators/run_online_langfuse_evaluators.py",
+        "--max-items",
+        "100",
+        "--watch-interval-seconds",
+        "60",
+      ]
+    depends_on:
+      langfuse-web:
+        condition: service_started
+      langfuse-worker:
+        condition: service_started
+    restart: "no"
+    profiles: ["eval"]
+
+  langfuse-worker:
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-postgres:5432/postgres
+      DIRECT_URL: postgresql://postgres:postgres@langfuse-postgres:5432/postgres
+
+  langfuse-web:
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-postgres:5432/postgres
+      DIRECT_URL: postgresql://postgres:postgres@langfuse-postgres:5432/postgres
+      LANGFUSE_INIT_ORG_ID: ${LANGFUSE_INIT_ORG_ID:-local-org}
+      LANGFUSE_INIT_ORG_NAME: ${LANGFUSE_INIT_ORG_NAME:-Local}
+      LANGFUSE_INIT_PROJECT_ID: ${LANGFUSE_INIT_PROJECT_ID:-full-local}
+      LANGFUSE_INIT_PROJECT_NAME: ${LANGFUSE_INIT_PROJECT_NAME:-${APP_ENV:-}}
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_INIT_PROJECT_PUBLIC_KEY:-pk-lf-local-dev}
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_INIT_PROJECT_SECRET_KEY:-sk-lf-local-dev}
+
+  langfuse-postgres:
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres

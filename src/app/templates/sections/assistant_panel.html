@@ -1,0 +1,141 @@
+<section class="assistant-panel-root" aria-label="Insights Assistant">
+    <input id="assistant-panel-toggle" class="assistant-panel-toggle sr-only" type="checkbox">
+
+    <label for="assistant-panel-toggle"
+           class="assistant-launcher"
+           aria-label="Open Insights Assistant">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+        </svg>
+        <span>Insights Assistant</span>
+    </label>
+
+    <label for="assistant-panel-toggle"
+           class="assistant-panel-backdrop"
+           aria-label="Close Insights Assistant"></label>
+
+    <aside class="assistant-panel" aria-labelledby="assistant-panel-title">
+        <div class="assistant-panel-header">
+            <div>
+                <p class="assistant-panel-kicker">Active</p>
+                <h2 id="assistant-panel-title" class="assistant-panel-title">Insights Assistant</h2>
+            </div>
+            <label for="assistant-panel-toggle"
+                   class="assistant-panel-close"
+                   aria-label="Close Insights Assistant">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </label>
+        </div>
+
+        <div class="assistant-context-chips" aria-label="Current report context" role="tablist">
+            <button role="tab" aria-selected="true" id="ctx-portfolio"
+                    hx-post="/insights/chat"
+                    hx-target="#assistant-chat-messages"
+                    hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+                    hx-include="#assistant-thread-id"
+              hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+                    hx-vals='{"message": "[Context: Portfolio report — use full portfolio summary metrics and narrative]", "target_id": "assistant-chat-messages", "thread_input_id": "assistant-thread-id"}'
+                    class="assistant-context-chip button-press active">
+                Portfolio report
+            </button>
+            <button role="tab" aria-selected="false" id="ctx-latest"
+                    hx-post="/insights/chat"
+                    hx-target="#assistant-chat-messages"
+                    hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+                    hx-include="#assistant-thread-id"
+                    hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+                    hx-vals='{"message": "[Context: Latest data — focus on most recent snapshot and real-time metrics]", "target_id": "assistant-chat-messages", "thread_input_id": "assistant-thread-id"}'
+                    class="assistant-context-chip button-press">
+                Latest data
+            </button>
+            <button role="tab" aria-selected="false" id="ctx-readonly"
+                    hx-post="/insights/chat"
+                    hx-target="#assistant-chat-messages"
+                    hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+                    hx-include="#assistant-thread-id"
+                    hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+                    hx-vals='{"message": "[Context: Read-only analysis — interpret visible data only, no external queries]", "target_id": "assistant-chat-messages", "thread_input_id": "assistant-thread-id"}'
+                    class="assistant-context-chip button-press">
+                Read-only analysis
+            </button>
+        </div>
+
+        <div id="assistant-chat-messages" class="chat-messages assistant-panel-messages">
+            <div class="chat-message flex items-start space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                </div>
+                <div class="bg-slate-100 rounded-2xl px-4 py-3 shadow-sm">
+                    <p class="chat-copy">Hey! I'm ready to dig into this portfolio report with you. Ask me anything — trends, RevPAR drivers, occupancy patterns, sentiment flags, or just \"what stands out?\" If I need more context (dates, filters, specific hotels), I'll ask.</p>
+                </div>
+            </div>
+
+            <div id="assistant-chat-typing-indicator" class="chat-message flex items-start space-x-3">
+                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+                    </svg>
+                </div>
+                <div class="bg-slate-100 rounded-2xl px-4 py-3">
+                    <div class="dot-pulse flex space-x-1" aria-label="Assistant is thinking">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--
+        <div class="assistant-quick-prompts" aria-label="Report-aware quick questions">
+            <button hx-post="/insights/chat"
+                    hx-target="#assistant-chat-messages"
+                    hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+                    hx-include="#assistant-thread-id"
+                    hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+                    hx-vals='{"message": "For the latest portfolio data, explain the most important RevPAR signal in this report.", "target_id": "assistant-chat-messages", "thread_input_id": "assistant-thread-id"}'
+                    class="assistant-quick-prompt">
+                Explain the main RevPAR signal
+            </button>
+            <button hx-post="/insights/chat"
+                    hx-target="#assistant-chat-messages"
+                    hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+                    hx-include="#assistant-thread-id"
+                    hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+                    hx-vals='{"message": "For the latest portfolio data, which hotels need attention by sentiment?", "target_id": "assistant-chat-messages", "thread_input_id": "assistant-thread-id"}'
+                    class="assistant-quick-prompt">
+                Find sentiment risks
+            </button>
+        </div> -->
+
+        <form hx-post="/insights/chat"
+              hx-target="#assistant-chat-messages"
+              hx-swap="beforeend scroll:#assistant-chat-messages:bottom focus-scroll:true"
+              hx-indicator="#assistant-chat-typing-indicator"
+              hx-on::after-request="document.getElementById('assistant-chat-input').value = ''"
+              hx-headers='js:{"X-User-ID": getUserId(), "X-Session-ID": getSessionId(), "X-User-Display-Name": getDisplayName()}'
+              class="assistant-panel-form">
+            <input type="text"
+                   name="message"
+                   id="assistant-chat-input"
+                   placeholder="Ask about this report..."
+                   class="assistant-panel-input"
+                   required>
+            <input type="hidden" name="thread_id" id="assistant-thread-id" value="">
+            <input type="hidden" name="target_id" value="assistant-chat-messages">
+            <input type="hidden" name="thread_input_id" value="assistant-thread-id">
+            <button type="submit" class="assistant-panel-submit" aria-label="Send message">
+                <svg class="w-5 h-5 htmx-request:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                </svg>
+                <svg class="w-5 h-5 htmx-indicator spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+                    <path stroke-linecap="round" stroke-width="4" d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
+                </svg>
+            </button>
+        </form>
+    </aside>
+</section>

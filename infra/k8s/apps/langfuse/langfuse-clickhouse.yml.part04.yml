@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-clickhouse
+  namespace: multi-agents
+  labels:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: clickhouse
+spec:
+  ports:
+    - port: 8123
+      targetPort: 8123
+      name: http
+    - port: 9000
+      targetPort: 9000
+      name: native
+  selector:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: clickhouse
+  clusterIP: None

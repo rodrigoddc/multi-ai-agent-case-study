@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hotel Insights AI{% endblock %}</title>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx-ext-sse@2.2.4" integrity="sha384-A986SAtodyH8eg8x8irJnYUk7i9inVQqYigD6qZ9evobksGNIXfeFvDwLSHcp31N" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script>
+    (function () {
+      'use strict';
+      var USER_ID_KEY = 'chat_user_id';
+      var SESSION_ID_KEY = 'chat_session_id';
+      var DISPLAY_NAME_KEY = 'chat_display_name';
+      function randomSuffix() {
+        return Math.random().toString(36).slice(2, 11);
+      }
+      function getUserId() {
+        var id = localStorage.getItem(USER_ID_KEY);
+        if (!id) {
+          id = 'user-' + randomSuffix();
+          localStorage.setItem(USER_ID_KEY, id);
+        }
+        return id;
+      }
+      function getSessionId() {
+        var id = sessionStorage.getItem(SESSION_ID_KEY);
+        if (!id) {
+          id = 'session-' + randomSuffix();
+          sessionStorage.setItem(SESSION_ID_KEY, id);
+        }
+        return id;
+      }
+      function getDisplayName() {
+        return localStorage.getItem(DISPLAY_NAME_KEY) || '';
+      }
+      function setDisplayName(name) {
+        if (name && name.trim().length >= 2) {
+          localStorage.setItem(DISPLAY_NAME_KEY, name.trim());
+        }
+      }
+      window.getUserId = getUserId;
+      window.getSessionId = getSessionId;
+      window.getDisplayName = getDisplayName;
+      window.setDisplayName = setDisplayName;
+    })();
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen antialiased" hx-indicator="#global-loader">
+    <div id="global-loader">
+        <div class="bar"></div>
+    </div>
+    {% include 'partials/header.html' %}
+    {% block content %}{% endblock %}
+
+    <div id="login-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+        <a href="#" class="modal-backdrop" aria-label="Close"></a>
+        <div class="modal-panel">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="login-modal-title" class="text-lg font-semibold text-gray-900">Welcome</h3>
+                <a href="#" class="text-gray-500 hover:text-gray-700" aria-label="Close">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </a>
+            </div>
+            <form id="login-form"
+                  hx-post="/auth/signin"
+                  hx-swap="none"
+                  hx-target="#login-modal"
+                  hx-headers='js:{"X-User-Display-Name": getDisplayName()}'
+                  hx-indicator="#login-save-indicator"
+                  class="space-y-4">
+                <div>
+                    <label class="block text-sm text-gray-700 mb-1" for="login-modal-name">Your name</label>
+                    <input type="text"
+                           id="login-modal-name"
+                           name="display_name"
+                           placeholder="Joao"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                           minlength="2"
+                           maxlength="120"
+                           autocomplete="off">
+                </div>
+                <p class="text-xs text-gray-500">Use your usual display name. Single letters or symbols will be ignored.</p>
+                <a href="#"
+                   onclick="setDisplayName(document.getElementById('login-modal-name').value)"
+                   id="login-button"
+                   class="block text-center w-full px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-[colors,transform] duration-150 ease-out button-press">
+                    Login
+                </a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

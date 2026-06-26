@@ -1,0 +1,11 @@
+<!-- templates/chat_error.html - Error message component -->
+<div class="chat-message flex items-start space-x-3">
+    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
+        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+    </div>
+    <div class="bg-red-50 border border-red-200 rounded-lg px-4 py-3 max-w-3xl">
+        <p class="text-red-800">{{ error_message }}</p>
+    </div>
+</div>

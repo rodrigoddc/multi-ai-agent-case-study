@@ -1,0 +1,35 @@
+<header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3 hover:opacity-80 transition-opacity" aria-label="Hotel Insights AI — Home">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 text-balance">Hotel Insights AI</h1>
+                        <p class="text-sm text-gray-500">Intelligent analytics for hotel performance</p>
+                    </div>
+                </a>
+                <nav class="flex items-center space-x-4">
+                    <a href="/chat"
+                       class="px-4 py-2 rounded-lg font-medium transition-colors {% if active_page == 'chat' %}bg-blue-100 text-blue-700{% else %}text-gray-600 hover:bg-gray-100{% endif %}"
+                       id="nav-chat">
+                        Standalone Chat
+                    </a>
+                    <span class="text-sm text-gray-600" id="header-display-name">
+                        {%- set display_name = request.headers.get('X-User-Display-Name') -%}
+                        {%- if display_name -%}
+                            {{ display_name }}
+                        {%- else -%}
+                            <a href="#login-modal"
+                               class="px-4 py-2 rounded-lg font-medium transition-colors border border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 button-press">
+                                Sign in
+                            </a>
+                        {%- endif -%}
+                    </span>
+                </nav>
+            </div>
+        </div>
+    </header>

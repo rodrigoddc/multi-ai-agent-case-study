@@ -1,0 +1,123 @@
+<!-- Insights Report Section -->
+        <section id="insights-section" class="mt-12">
+            <div class="space-y-8">
+                <!-- Report Header -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 text-balance">Hotel Performance Report</h2>
+                            <p class="text-gray-600 mt-1">Comprehensive analysis of your hotel portfolio</p>
+                        </div>
+                        <button hx-get="/insights/summary/fragment"
+                                hx-target="#metrics-grid"
+                                hx-swap="innerHTML transition:true"
+                                id="refresh-report-btn"
+                                class="flex items-center gap-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg font-medium hover:bg-blue-200 transition-[colors,transform] duration-150 ease-out button-press">
+                            <span class="htmx-request:hidden">Refresh</span>
+                            <span class="htmx-indicator flex items-center gap-1">
+                                <svg class="w-4 h-4 spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+                                    <path stroke-linecap="round" stroke-width="4" d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
+                                </svg>
+                                <span>Loading...</span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <!-- Key Metrics Grid -->
+                    <div id="metrics-grid" hx-get="/insights/summary/fragment" hx-trigger="intersect once" hx-swap="innerHTML">
+                        <!-- Shimmer placeholders until loadInsights() populates -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="shimmer h-24 rounded-lg"></div>
+                            <div class="shimmer h-24 rounded-lg"></div>
+                            <div class="shimmer h-24 rounded-lg"></div>
+                            <div class="shimmer h-24 rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storytelling Insights -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Top Performers -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="px-6 py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 text-balance flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                                Top Performers
+                            </h3>
+                        </div>
+                        <div id="top-performers" class="p-6">
+                            <p class="text-sm text-gray-600">Generate this section when you need an AI-written summary of the strongest occupancy performers.</p>
+                            <button hx-get="/insights/query/fragment?query=Show%20me%20the%20top%203%20performing%20hotels%20by%20occupancy%20rate"
+                                    hx-target="#top-performers"
+                                    hx-swap="innerHTML"
+                                    hx-indicator="#top-performers-spinner"
+                                    class="mt-4 rounded-lg bg-green-100 px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-[colors,transform] duration-150 ease-out button-press">
+                                <span class="htmx-request:hidden">Analyze top performers</span>
+                                <span id="top-performers-spinner" class="htmx-indicator flex items-center space-x-2">
+                                    <svg class="w-4 h-4 spinner text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+                                        <path stroke-linecap="round" stroke-width="4" d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
+                                    </svg>
+                                    <span>Analyzing...</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Underperformers -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div class="px-6 py-4 bg-gradient-to-r from-red-50 to-orange-50 border-b border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-900 text-balance flex items-center">
+                                <span class="w-2 h-2 bg-red-500 rounded-full mr-2"></span>
+                                Needs Attention
+                            </h3>
+                        </div>
+                        <div id="underperformers" class="p-6">
+                            <p class="text-sm text-gray-600">Generate this section when you need an AI-written summary of hotels that need attention.</p>
+                            <button hx-get="/insights/query/fragment?query=Show%20me%20the%203%20lowest%20performing%20hotels%20by%20sentiment"
+                                    hx-target="#underperformers"
+                                    hx-swap="innerHTML"
+                                    hx-indicator="#underperformers-spinner"
+                                    class="mt-4 rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-[colors,transform] duration-150 ease-out button-press">
+                                <span class="htmx-request:hidden">Analyze risks</span>
+                                <span id="underperformers-spinner" class="htmx-indicator flex items-center space-x-2">
+                                    <svg class="w-4 h-4 spinner text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+                                        <path stroke-linecap="round" stroke-width="4" d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
+                                    </svg>
+                                    <span>Analyzing...</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI-Generated Narrative -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+                    <h3 class="text-xl font-semibold text-gray-900 text-balance mb-6 flex items-center">
+                        <svg class="w-6 h-6 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        AI Insights Narrative
+                    </h3>
+                    <div id="ai-narrative" class="prose max-w-none text-gray-700 leading-relaxed">
+                        <p class="text-sm text-gray-600">Generate the portfolio narrative only when you need the AI synthesis.</p>
+                        <button hx-get="/insights/query/fragment?query=Provide%20a%20comprehensive%20narrative%20analysis%20of%20the%20hotel%20portfolio%20performance%2C%20highlighting%20key%20trends%2C%20opportunities%2C%20and%20areas%20of%20concern"
+                                hx-target="#ai-narrative"
+                                hx-swap="innerHTML"
+                                hx-indicator="#ai-narrative-spinner"
+                                class="mt-4 rounded-lg bg-purple-100 px-4 py-2 text-sm font-medium text-purple-800 hover:bg-purple-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-[colors,transform] duration-150 ease-out button-press">
+                            <span class="htmx-request:hidden">Generate narrative</span>
+                            <span id="ai-narrative-spinner" class="htmx-indicator flex items-center space-x-2">
+                                <svg class="w-4 h-4 spinner text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" stroke-width="4" stroke-opacity="0.25"></circle>
+                                    <path stroke-linecap="round" stroke-width="4" d="M12 2a10 10 0 0 1 10 10" stroke-opacity="1"></path>
+                                </svg>
+                                <span>Generating...</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>

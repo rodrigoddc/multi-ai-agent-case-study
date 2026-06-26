@@ -1,0 +1,25 @@
+info:
+  name: chat start
+  type: http
+
+http:
+  method: GET
+  url: http://127.0.0.1:8000/chat
+  headers:
+    - name: thread_id
+      value: 247fa59cc6af8e8f90c4f8139a23d08c
+    - name: user_id
+      value: john_doe
+  body:
+    type: multipart-form
+    data:
+      - name: message
+        type: text
+        value: hi
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

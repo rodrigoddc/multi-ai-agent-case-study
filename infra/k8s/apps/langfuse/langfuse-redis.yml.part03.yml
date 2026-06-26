@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: langfuse-redis
+  namespace: multi-agents
+  labels:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: redis
+spec:
+  ports:
+    - port: 6379
+      targetPort: 6379
+      name: redis
+  selector:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: redis
+  clusterIP: None

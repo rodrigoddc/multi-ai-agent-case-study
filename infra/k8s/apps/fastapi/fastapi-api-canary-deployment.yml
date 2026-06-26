@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-canary
+  namespace: multi-agents
+  labels:
+    app: fastapi
+    version: canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: fastapi
+        version: canary
+    spec:
+      containers:
+        - name: fastapi
+          image: localhost/fastapi-hotels:canary
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          env:
+            - name: APP_ENV
+              value: dev
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+            - secretRef:
+                name: app-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15

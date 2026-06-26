@@ -1,0 +1,131 @@
+x-db-env: &db-env
+  POSTGRES_USER: ${POSTGRES_USER:-hoteluser}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hotelpass}
+  POSTGRES_DB: ${POSTGRES_DB:-hotelsdb}
+
+x-app-env: &app-env
+  <<: *db-env
+  DB_HOST: pgbouncer
+  DB_PORT: 5432
+
+x-pgbouncer-depends: &pgbouncer-depends
+  pgbouncer:
+    condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      <<: *db-env
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_HOST_AUTH_METHOD: md5
+      POSTGRES_INITDB_ARGS: --auth-host=md5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hoteluser} -d ${POSTGRES_DB:-hotelsdb}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      LISTEN_ADDR: "*"
+      DB_USER: ${POSTGRES_USER:-hoteluser}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-hotelpass}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-hotelsdb}
+      AUTH_TYPE: md5
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 100
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      RESERVE_POOL_SIZE: 5
+      ADMIN_USERS: ${POSTGRES_USER:-hoteluser}
+      STATS_USERS: ${POSTGRES_USER:-hoteluser}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U ${POSTGRES_USER:-hoteluser}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  seed:
+    build:
+      context: ../../../
+      dockerfile: infra/container/jobs/Dockerfile
+    environment:
+      <<: *app-env
+    depends_on: *pgbouncer-depends
+    restart: "no"
+    profiles: ["seed"]
+
+  sync-langfuse-datasets:
+    build:
+      context: ../../../
+      dockerfile: infra/container/jobs/Dockerfile
+    environment:
+      <<: *app-env
+    env_file:
+      - ../../../src/.env
+    command: ["uv", "run", "python", "evaluators/sync_langfuse_datasets.py", "--all"]
+    restart: "no"
+    profiles: ["sync"]
+
+  sync-langfuse-score-configs:
+    build:
+      context: ../../../
+      dockerfile: infra/container/jobs/Dockerfile
+    environment:
+      <<: *app-env
+    env_file:
+      - ../../../src/.env
+    command: ["uv", "run", "python", "evaluators/sync_langfuse_score_configs.py"]
+    restart: "no"
+    profiles: ["sync"]
+
+  sync-langfuse-llm-judge-evaluators:
+    build:
+      context: ../../../
+      dockerfile: infra/container/jobs/Dockerfile
+    environment:
+      <<: *app-env
+    env_file:
+      - ../../../src/.env
+    command: ["uv", "run", "python", "evaluators/sync_langfuse_llm_judge_evaluators.py"]
+    restart: "no"
+    profiles: ["sync"]
+
+  fastapi:
+    build:
+      context: ../../../
+      dockerfile: infra/container/app/Dockerfile
+    environment:
+      <<: *app-env
+    env_file:
+      - ../../../src/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on: *pgbouncer-depends
+    ports:
+      - "127.0.0.1:8000:8000"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ../../../src
+          target: /app/src
+        - action: sync+restart
+          path: ../../../config
+          target: /app/config
+        - action: rebuild
+          path: ../../../pyproject.toml
+
+volumes:
+  postgres_data:
+    driver: local

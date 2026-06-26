@@ -1,0 +1,44 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Hotel Management Reports{% endblock %}
+
+{% block content %}
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <section class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <p class="text-sm font-semibold text-blue-700 uppercase tracking-wide">Executive Management Pack</p>
+        <h1 class="mt-2 text-3xl font-bold text-gray-900">Hotel Performance Reports</h1>
+        <p class="mt-3 text-gray-600 max-w-3xl">
+            Operator-ready reports modeled around daily flash, revenue pace, USALI-lite owner packs,
+            guest satisfaction, GOP flow-through, and quarterly regional reviews.
+        </p>
+    </section>
+
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {% set p = reports.daily_flash.portfolio %}
+        <div class="metric-card metric-card-blue">
+            <p class="metric-label">Occ</p>
+            <p class="metric-value tabular-nums">{{ '%.1f' | format(p.occupancy_rate | default(0)) }}%</p>
+        </div>
+        <div class="metric-card metric-card-purple">
+            <p class="metric-label">RevPAR</p>
+            <p class="metric-value tabular-nums">${{ '%.2f' | format(p.revpar | default(0)) }}</p>
+        </div>
+        <div class="metric-card metric-card-green">
+            <p class="metric-label">GOP Margin</p>
+            <p class="metric-value tabular-nums">{{ '%.1f' | format(p.gop_margin | default(0)) }}%</p>
+        </div>
+        <div class="metric-card metric-card-amber">
+            <p class="metric-label">GSS</p>
+            <p class="metric-value tabular-nums">{{ '%.1f' | format(p.gss_score | default(0)) }}</p>
+        </div>
+    </section>
+
+    {% include 'reports/daily_flash.html' with context %}
+    {% set report = reports.weekly_pace %}
+    {% include 'reports/weekly_pace.html' with context %}
+    {% set report = reports.monthly_owner_pack %}
+    {% include 'reports/monthly_owner_pack.html' with context %}
+    {% set report = reports.quarterly_business_review %}
+    {% include 'reports/quarterly_business_review.html' with context %}
+</main>
+{% endblock %}

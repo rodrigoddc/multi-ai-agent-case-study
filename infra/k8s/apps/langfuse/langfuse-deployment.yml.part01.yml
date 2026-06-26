@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: langfuse-worker
+  namespace: multi-agents
+  labels:
+    app.kubernetes.io/name: langfuse
+    app.kubernetes.io/component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: langfuse
+      app.kubernetes.io/component: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: langfuse
+        app.kubernetes.io/component: worker
+    spec:
+      containers:
+        - name: langfuse-worker
+          image: docker.io/langfuse/langfuse-worker:3
+          ports:
+            - containerPort: 3030
+              name: worker
+          envFrom:
+            - configMapRef:
+                name: langfuse-config
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: database-url
+            - name: SALT
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: salt
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: encryption-key
+            - name: CLICKHOUSE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: clickhouse-user
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: clickhouse-password
+            - name: CLICKHOUSE_MIGRATION_URL
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: clickhouse-migration-url
+            - name: CLICKHOUSE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: clickhouse-url
+            - name: LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: minio-root-password
+            - name: LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: minio-endpoint
+            - name: LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: minio-root-password
+            - name: LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: minio-endpoint
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: redis-host
+            - name: REDIS_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: langfuse-secrets
+                  key: redis-auth
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3030
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3030
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 3
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"

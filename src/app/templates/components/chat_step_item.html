@@ -1,0 +1,20 @@
+<div id="chat-active-step-{{ message_id }}"
+     class="chat-timeline-item chat-timeline-item-{{ status }} chat-agent-graph">
+    <span class="chat-timeline-rail" aria-hidden="true"></span>
+    <span class="chat-timeline-node" aria-hidden="true">
+        {% if status == 'complete' %}
+            ✓
+        {% else %}
+        <span class="chat-timeline-spinner" aria-hidden="true"></span>
+        {% endif %}
+    </span>
+    <div class="chat-timeline-content chat-agent-node">
+        <span class="chat-timeline-label chat-agent-name">{{ agent_name }} agent</span>
+        <ul class="chat-agent-leaves">
+            <li class="chat-agent-leaf">{{ activity }}</li>
+            {% for detail in details %}
+                <li class="chat-agent-leaf">{{ detail }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
